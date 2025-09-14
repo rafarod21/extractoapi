@@ -10,12 +10,6 @@ import {
 } from '../services/clientService';
 import { clientSchema } from '../schemas/clientSchema';
 
-/**
- * Controller: recebe Requisição/Resposta, valida entradas (Zod) e chama Services.
- * Em caso de erro controlado (validação) responde 400 com issues.
- * Em caso de erro de negócio lança next(error) para o middleware central tratar.
- */
-
 export async function handleListClients(
   request: Request,
   response: Response,

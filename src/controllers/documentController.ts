@@ -4,6 +4,7 @@ import { AppError } from '../utils/AppError';
 import {
   listDocumentsClient,
   processClientPdf,
+  processClientWeb,
 } from '../services/documentService';
 
 export async function handleUploadClientPdf(
@@ -17,7 +18,7 @@ export async function handleUploadClientPdf(
       .parse(request.params);
 
     if (!request.file) {
-      return next(new AppError(400, 'No files sent.'));
+      throw new AppError(400, 'No files sent.');
     }
 
     const createdDocument = await processClientPdf(
@@ -25,6 +26,26 @@ export async function handleUploadClientPdf(
       clientId
     );
 
+    return response.status(201).json(createdDocument);
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export async function handleFetchUrlForClient(
+  request: Request,
+  response: Response,
+  next: NextFunction
+) {
+  try {
+    const { clientId } = z
+      .object({ clientId: z.string() })
+      .parse(request.params);
+
+    const bodySchema = z.object({ url: z.url() });
+    const { url } = bodySchema.parse(request.body);
+
+    const createdDocument = await processClientWeb(url, clientId);
     return response.status(201).json(createdDocument);
   } catch (error) {
     return next(error);

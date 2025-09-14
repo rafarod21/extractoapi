@@ -2,6 +2,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import {
+  handleFetchUrlForClient,
   handleListDocumentsClient,
   handleUploadClientPdf,
 } from '../controllers/documentController';
@@ -9,12 +10,8 @@ import {
 const router = Router();
 const upload = multer();
 
-router.post(
-  '/uploadpdf/:clientId',
-  upload.single('file'),
-  handleUploadClientPdf
-);
-
+router.post('/pdf/:clientId', upload.single('file'), handleUploadClientPdf);
+router.post('/url/:clientId', handleFetchUrlForClient);
 router.get('/:clientId', handleListDocumentsClient);
 
 export default router;
