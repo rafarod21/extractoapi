@@ -35,7 +35,6 @@ services:
     # Comando que aplica migrações e inicia a app. Mantemos sleep curto para dar tempo extra se necessário.
     command: sh -c "sleep 5 && npx prisma migrate deploy && exec npm run start"
     volumes:
-      - ./dist:/app/dist # útil em dev; em produção você pode remover
       - ./prisma:/app/prisma
       - /app/node_modules
     healthcheck:
