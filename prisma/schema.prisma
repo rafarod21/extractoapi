@@ -10,7 +10,7 @@ datasource db {
 model Client {
   id                  String    @id @default(uuid())
   name                String
-  personType          String
+  personType          String // "PF" | "PJ"
   cpfCnpj             String    @unique
   email               String?
   birthDate           DateTime?
@@ -25,4 +25,19 @@ model Client {
   addressZipCode      String?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
+
+  documents Document[]
+}
+
+model Document {
+  id          String   @id @default(uuid())
+  title       String
+  content     String
+  processedAt DateTime @default(now())
+  type        String // "PDF" | "WEB"
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id])
+
+  @@index([clientId])
 }

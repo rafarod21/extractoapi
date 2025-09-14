@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import clientRouter from './clientRoutes';
+import documentRouter from './documentRoutes';
 
 const router = Router();
 
@@ -8,5 +9,6 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 router.use('/clients', clientRouter);
+router.use('/documents', documentRouter);
 
 export default router;

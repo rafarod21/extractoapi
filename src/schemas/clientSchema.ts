@@ -27,7 +27,7 @@ export const clientSchema = z
     cpfCnpj: z.string(),
     address: addressSchema.optional(),
     email: z.email('Invalid email'),
-    birthDate: z.string().optional(),
+    birthDate: z.iso.date().optional(),
     landline: z
       .string()
       .regex(
