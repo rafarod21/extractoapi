@@ -7,11 +7,15 @@ import {
   handleUploadPdfClient,
 } from '../controllers/documentController';
 
-const router = Router();
+const documentRouter = Router();
 const upload = multer();
 
-router.post('/pdf/:clientId', upload.single('file'), handleUploadPdfClient);
-router.post('/url/:clientId', handleFetchUrlClient);
-router.get('/:clientId', handleListDocumentsClient);
+documentRouter.post(
+  '/pdf/:clientId',
+  upload.single('file'),
+  handleUploadPdfClient
+);
+documentRouter.post('/url/:clientId', handleFetchUrlClient);
+documentRouter.get('/:clientId', handleListDocumentsClient);
 
-export default router;
+export default documentRouter;

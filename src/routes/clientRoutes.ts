@@ -7,14 +7,15 @@ import {
   handlePatchClient,
   handleReplaceClient,
 } from '../controllers/clientController';
+import { authenticateToken } from '../middlewares/auth';
 
 const clientRouter = Router();
 
 clientRouter.get('/', handleListClients);
 clientRouter.get('/:clientId', handleGetClient);
 clientRouter.post('/', handleCreateClient);
-clientRouter.put('/:clientId', handleReplaceClient);
-clientRouter.patch('/:clientId', handlePatchClient);
-clientRouter.delete('/:clientId', handleDeleteClient);
+clientRouter.put('/:clientId', authenticateToken, handleReplaceClient);
+clientRouter.patch('/:clientId', authenticateToken, handlePatchClient);
+clientRouter.delete('/:clientId', authenticateToken, handleDeleteClient);
 
 export default clientRouter;

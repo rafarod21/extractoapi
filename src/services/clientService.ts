@@ -2,6 +2,7 @@ import prisma from '../libs/prismaClient';
 import { AppError } from '../utils/AppError';
 import { z } from 'zod';
 import { clientSchema } from '../schemas/clientSchema';
+import { generateToken } from '../utils/jwt';
 
 type ClientInput = z.infer<typeof clientSchema>;
 
@@ -59,7 +60,7 @@ export async function createClient(clientInput: ClientInput) {
     throw new AppError(400, 'Client with this CPF/CNPJ already exists.');
   }
 
-  const created = await prisma.client.create({
+  const client = await prisma.client.create({
     data: {
       name: clientInput.name,
       personType: clientInput.personType,
@@ -80,7 +81,12 @@ export async function createClient(clientInput: ClientInput) {
     },
   });
 
-  return created;
+  const token = generateToken(client.id);
+
+  return {
+    clientId: client.id,
+    token,
+  };
 }
 
 export async function updateClientReplace(

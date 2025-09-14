@@ -47,7 +47,7 @@ export async function handleCreateClient(
   try {
     const dataClient = clientSchema.parse(request.body);
     const createdClient = await createClient(dataClient);
-    return response.status(201).json({ clientId: createdClient.id });
+    return response.status(201).json({ createdClient });
   } catch (error) {
     return next(error);
   }

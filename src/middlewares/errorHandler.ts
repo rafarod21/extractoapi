@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { AppError } from '../utils/AppError';
 import { MulterError } from 'multer';
+import { JsonWebTokenError } from 'jsonwebtoken';
 
 export function errorHandler(
   error: Error,
@@ -9,8 +10,6 @@ export function errorHandler(
   response: Response,
   next: NextFunction
 ) {
-  console.error(error);
-
   if (error instanceof AppError) {
     return response.status(error.statusCode).json({
       message: error.message,
@@ -25,6 +24,12 @@ export function errorHandler(
     return response.status(400).json({
       message: error.message,
       code: error.code,
+    });
+  }
+
+  if (error instanceof JsonWebTokenError) {
+    return response.status(400).json({
+      message: error.message,
     });
   }
 
