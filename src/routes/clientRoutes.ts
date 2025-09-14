@@ -69,69 +69,10 @@ clientRouter.put('/:clientId', async (request: Request, response: Response) => {
     return response.status(404).send();
   }
 
-  let dataClient;
-
   try {
-    dataClient = clientSchema.parse(request.body);
-  } catch (error) {
-    if (error instanceof ZodError) {
-      return response.status(400).json({ errors: error.issues });
-    }
-    return response.status(500).json({ message: 'Internal Server Error' });
-  }
+    const dataClient = clientSchema.parse(request.body);
 
-  const updateclient = await prisma.client.update({
-    where: { id: clientId },
-    data: {
-      name: dataClient.name,
-      personType: dataClient.personType,
-      cpfCnpj: dataClient.cpfCnpj,
-      email: dataClient.email,
-      birthDate: dataClient.birthDate,
-      landline: dataClient.landline,
-      mobilePhone: dataClient.mobilePhone,
-      addressStreet: dataClient.address?.street,
-      addressNumber: dataClient.address?.number,
-      addressComplement: dataClient.address?.complement,
-      addressNeighborhood: dataClient.address?.neighborhood,
-      addressCity: dataClient.address?.city,
-      addressUf: dataClient.address?.uf,
-      addressZipCode: dataClient.address?.zipCode,
-    },
-  });
-
-  return response.json(updateclient);
-});
-
-clientRouter.patch(
-  '/:clientId',
-  async (request: Request, response: Response) => {
-    const { clientId } = z
-      .object({ clientId: z.string() })
-      .parse(request.params);
-
-    const client = await prisma.client.findUnique({
-      where: { id: clientId },
-    });
-
-    if (!client) {
-      return response.status(404).send();
-    }
-
-    // Define a schema for partial updates
-    const partialClientSchema = clientSchema.partial();
-
-    let dataClient;
-    try {
-      dataClient = partialClientSchema.parse(request.body);
-    } catch (error) {
-      if (error instanceof ZodError) {
-        return response.status(400).json({ errors: error.issues });
-      }
-      return response.status(500).json({ message: 'Internal Server Error' });
-    }
-
-    const updatedClient = await prisma.client.update({
+    const updateclient = await prisma.client.update({
       where: { id: clientId },
       data: {
         name: dataClient.name,
@@ -151,7 +92,64 @@ clientRouter.patch(
       },
     });
 
-    return response.json(updatedClient);
+    return response.json(updateclient);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return response.status(400).json({ errors: error.issues });
+    }
+
+    return response.status(500).json({ error });
+  }
+});
+
+clientRouter.patch(
+  '/:clientId',
+  async (request: Request, response: Response) => {
+    const { clientId } = z
+      .object({ clientId: z.string() })
+      .parse(request.params);
+
+    const client = await prisma.client.findUnique({
+      where: { id: clientId },
+    });
+
+    if (!client) {
+      return response.status(404).send();
+    }
+
+    const partialClientSchema = clientSchema.partial();
+
+    try {
+      const dataClient = partialClientSchema.parse(request.body);
+
+      const updatedClient = await prisma.client.update({
+        where: { id: clientId },
+        data: {
+          name: dataClient.name,
+          personType: dataClient.personType,
+          cpfCnpj: dataClient.cpfCnpj,
+          email: dataClient.email,
+          birthDate: dataClient.birthDate,
+          landline: dataClient.landline,
+          mobilePhone: dataClient.mobilePhone,
+          addressStreet: dataClient.address?.street,
+          addressNumber: dataClient.address?.number,
+          addressComplement: dataClient.address?.complement,
+          addressNeighborhood: dataClient.address?.neighborhood,
+          addressCity: dataClient.address?.city,
+          addressUf: dataClient.address?.uf,
+          addressZipCode: dataClient.address?.zipCode,
+        },
+      });
+
+      return response.json(updatedClient);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return response.status(400).json({ errors: error.issues });
+      }
+
+      return response.status(500).json({ error });
+    }
   }
 );
 
