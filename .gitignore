@@ -6,6 +6,11 @@ node_modules/
 .env.local
 .env.*.local
 
+# Build output
+dist/
+
 # Prisma
-prisma/migrations/
-prisma/database.db
+prisma/prisma/database.db
+
+# Docker
+docker_pgdata/

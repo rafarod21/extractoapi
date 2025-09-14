@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: extractoapi_postgres
+    environment:
+      POSTGRES_USER: extracto
+      POSTGRES_PASSWORD: extractopass
+      POSTGRES_DB: extractodb
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U extracto -d extractodb']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: extractoapi_app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Conexão para o Postgres pelo nome do serviço 'postgres' na mesma network do compose
+      DATABASE_URL: 'postgresql://extracto:extractopass@postgres:5432/extractodb?schema=public'
+      PORT: '3000'
+    ports:
+      - '3000:3000'
+    # Comando que aplica migrações e inicia a app. Mantemos sleep curto para dar tempo extra se necessário.
+    command: sh -c "sleep 5 && npx prisma migrate deploy && exec npm run start"
+    volumes:
+      - ./dist:/app/dist # útil em dev; em produção você pode remover
+      - ./prisma:/app/prisma
+      - /app/node_modules
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:3000/health || exit 1']
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  postgres_data:

@@ -1,0 +1,10 @@
+.git
+.gitignore
+.dockerignore
+node_modules
+dist
+prisma/database.db
+prisma/database.db-journal
+.env
+Dockerfile
+docker-compose.yml
