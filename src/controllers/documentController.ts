@@ -7,7 +7,7 @@ import {
   processClientWeb,
 } from '../services/documentService';
 
-export async function handleUploadClientPdf(
+export async function handleUploadPdfClient(
   request: Request,
   response: Response,
   next: NextFunction
@@ -32,7 +32,7 @@ export async function handleUploadClientPdf(
   }
 }
 
-export async function handleFetchUrlForClient(
+export async function handleFetchUrlClient(
   request: Request,
   response: Response,
   next: NextFunction

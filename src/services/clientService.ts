@@ -6,19 +6,40 @@ import { clientSchema } from '../schemas/clientSchema';
 type ClientInput = z.infer<typeof clientSchema>;
 
 export async function listClients() {
-  return prisma.client.findMany();
+  const clients = await prisma.client.findMany({
+    include: {
+      _count: {
+        select: { documents: true },
+      },
+    },
+  });
+
+  return clients.map(({ _count, ...client }) => ({
+    ...client,
+    documentsCount: _count.documents,
+  }));
 }
 
 export async function getClientById(clientId: string) {
   const client = await prisma.client.findUnique({
     where: { id: clientId },
+    include: {
+      _count: {
+        select: { documents: true },
+      },
+    },
   });
 
   if (!client) {
-    throw new AppError(404, `Client ID not found.`);
+    throw new AppError(404, 'Client ID not found.');
   }
 
-  return client;
+  const { _count, ...rest } = client;
+
+  return {
+    ...rest,
+    documentsCount: _count.documents,
+  };
 }
 
 async function existClientWithCpfCnpj(cpfCnpj: string) {

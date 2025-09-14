@@ -9,14 +9,16 @@ export function errorHandler(
   response: Response,
   next: NextFunction
 ) {
-  if (error instanceof ZodError) {
-    return response.status(400).json({ errors: error.issues });
-  }
+  console.error(error);
 
   if (error instanceof AppError) {
     return response.status(error.statusCode).json({
       message: error.message,
     });
+  }
+
+  if (error instanceof ZodError) {
+    return response.status(400).json({ errors: error.issues });
   }
 
   if (error instanceof MulterError) {
@@ -28,5 +30,6 @@ export function errorHandler(
 
   return response.status(500).json({
     message: 'Internal Server Error',
+    error: error.message,
   });
 }
