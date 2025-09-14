@@ -5,13 +5,45 @@ const REGEX_ZIP_CODE = /^\d{8}$/; // Example: 12345678
 const REGEX_LANDLINE = /^\d{10}$/; // Example: 4412345678
 const REGEX_MOBILE = /^\d{11}$/; // Example: 44123456789
 
+const UFS = [
+  'AC',
+  'AL',
+  'AP',
+  'AM',
+  'BA',
+  'CE',
+  'DF',
+  'ES',
+  'GO',
+  'MA',
+  'MT',
+  'MS',
+  'MG',
+  'PA',
+  'PB',
+  'PR',
+  'PE',
+  'PI',
+  'RJ',
+  'RN',
+  'RS',
+  'RO',
+  'RR',
+  'SC',
+  'SP',
+  'SE',
+  'TO',
+];
+
 const addressSchema = z.object({
   street: z.string().min(1),
   number: z.string(),
   complement: z.string().optional(),
   neighborhood: z.string(),
   city: z.string(),
-  uf: z.string(),
+  uf: z.enum(UFS, {
+    message: 'Invalid UF. Must be one of the valid Brazilian states.',
+  }),
   zipCode: z
     .string()
     .regex(
